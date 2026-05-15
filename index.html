@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퇴사는 핑계일뿐 오랜만에 모여서 맛있는거 먹어요 </title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #f8f9fa; font-family: 'Pretendard', sans-serif; }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #f8f9fa; padding: 40px 0; }
+        .container { max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        
+        .hero { background: #000; color: #fff; padding: 50px 30px; text-align: center; }
+        .hero h1 { font-size: 24px; margin: 0; font-weight: 800; line-height: 1.4; word-break: keep-all; }
+        .hero p { font-size: 16px; margin: 15px 0 0; opacity: 0.9; }
+        
+        .section { padding: 30px; }
+        .intro { text-align: center; font-size: 16px; color: #444; margin-bottom: 25px; line-height: 1.6; }
+        
+        .free-notice { text-align: center; color: #888; font-size: 14px; margin-bottom: 35px; padding: 12px; border-top: 1px solid #f1f1f1; border-bottom: 1px solid #f1f1f1; }
+
+        .schedule-item { margin-bottom: 40px; }
+        .round-text { display: inline-block; background: #000; color: #fff; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+        
+        .place-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .place-name { font-size: 20px; font-weight: 700; color: #111; }
+        .btn-map { display: inline-flex; align-items: center; background: #f1f3f5; color: #495057; text-decoration: none; font-size: 12px; padding: 4px 10px; border-radius: 6px; font-weight: 600; }
+
+        .menu-info { font-size: 15px; color: #555; display: block; line-height: 1.5; }
+        .tip-box { padding: 14px 18px; border-radius: 12px; margin-top: 12px; font-size: 14px; line-height: 1.5; }
+        .tip-grey { background: #f1f3f5; color: #495057; }
+        .tip-red { background: #fff0f0; color: #e03131; }
+
+        /* RSVP 모듈 스타일 */
+        .rsvp-card { background: #fff4f2; border-radius: 20px; padding: 26px; text-align: center; margin-bottom: 40px; }
+        .deadline-date { font-size: 18px; font-weight: 800; color: #e03131; margin-bottom: 20px; }
+
+        .rsvp-form { display: none; text-align: left; margin-top: 20px; border-top: 1px dashed #ffcfc9; padding-top: 20px; }
+        .rsvp-form input, .rsvp-form select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #eee; border-radius: 10px; box-sizing: border-box; font-size: 14px; font-family: inherit; }
+
+        .btn-main { display: block; width: 100%; background: #ff3e3e; color: #fff; text-align: center; padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 17px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 62, 62, 0.2); }
+
+        /* 참석자 표 스타일 */
+        .rsvp-table-section { margin-top: 30px; }
+        .rsvp-table-title { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 12px; text-align: center; }
+        .rsvp-summary { display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
+        .summary-badge { display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+        .badge-total { background: #fff0f0; color: #e03131; }
+        .badge-attend { background: #ebfbee; color: #2f9e44; }
+        .badge-absent { background: #f1f3f5; color: #868e96; }
+        .rsvp-table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #ffd8cc; }
+        .rsvp-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .rsvp-table thead th { background: #ffe8e0; color: #c92a2a; font-weight: 700; padding: 10px 14px; text-align: left; }
+        .rsvp-table tbody tr { border-top: 1px solid #ffe8e0; }
+        .rsvp-table tbody tr:hover { background: #fff9f8; }
+        .rsvp-table tbody td { padding: 10px 14px; color: #333; vertical-align: middle; }
+        .attendance-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+        .att-1st { background: #fff3bf; color: #e67700; }
+        .att-2nd { background: #d3f9d8; color: #2b8a3e; }
+        .att-absent { background: #f1f3f5; color: #868e96; }
+        .rsvp-empty { text-align: center; color: #aaa; padding: 20px; font-size: 14px; }
+        .rsvp-loading { text-align: center; color: #aaa; padding: 20px; font-size: 14px; }
+
+        .footer-notice { background: #f8f9fa; border-top: 1px solid #eee; padding: 35px 30px; text-align: center; }
+        .info-pill { display: inline-block; background: #fff; border: 1px solid #ddd; padding: 10px 20px; border-radius: 50px; font-size: 14px; color: #333; margin-bottom: 15px; font-weight: 600; }
+        .info-desc { font-size: 14px; color: #777; line-height: 1.6; margin: 0; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="hero">
+                <h1>퇴사는 핑계일 뿐<br />오랜만에 모여서 맛있는 거 먹기</h1>
+                <p>5월 22일 금요일 | 18:30 PM</p>
+            </div>
+
+            <div class="section">
+                <p class="intro">
+                    마지막 남은 장터즈, <strong>현아 승훈</strong> 드디어 킨텍스 떠납니다! ✈️<br />
+                    가기 전에 다 같이 모여 맛있는 거 먹어요.😋<br />
+                    <strong>즐거운 마음으로! 함께 해주시면 감사하겠습니다!</strong>
+                </p>
+
+                <div class="free-notice">2차, 3차는 자유롭게! 부담 갖지 말고 편하게 참석해주세요. :)</div>
+
+                <div class="schedule-item">
+                    <div class="round-text">1차</div>
+                    <div class="place-header">
+                        <span class="place-name">맛있는 왕소금구이</span>
+                        <a href="https://naver.me/xAFCYCYF" target="_blank" class="btn-map">📍 지도보기</a>
+                    </div>
+                    <span class="menu-info">회식의 꽃은 고기. 꽃삼겹살 & 꽃목살</span>
+                    <div class="tip-box tip-grey">💡 <b>자엽 대리님 픽:</b> "여기 잔치국수 맛있어요"</div>
+                </div>
+
+                <div class="schedule-item">
+                    <div class="round-text">2차</div>
+                    <div class="place-header">
+                        <span class="place-name">치킨더멤버</span>
+                        <a href="https://naver.me/GV2LKgD2" target="_blank" class="btn-map">📍 지도보기</a>
+                    </div>
+                    <span class="menu-info">옛날식치킨 🍗 다양한 맛을 먹어보겠어요 (*감튀있음)</span>
+                    <div class="tip-box tip-red">⚠️ <b>기름 냄새 주의!</b> (옷에 기름냄새 엄청 뱁니다..!)</div>
+                </div>
+
+                <div class="schedule-item">
+                    <div class="round-text">3차</div>
+                    <div class="place-header">
+                        <span class="place-name">호맥 (HOMAC)</span>
+                        <a href="https://naver.me/5KbMx4wD" target="_blank" class="btn-map">📍 지도보기</a>
+                    </div>
+                    <span class="menu-info">시원한 맥주와 호떡! 분모자 떡볶이도 맛있음 (*샤베트 있음)</span>
+                    <div class="tip-box tip-grey">🏃‍♂️ <b>장터즈 픽:</b> 저희의 새로운 방앗간이에요.</div>
+                </div>
+
+                <!-- RSVP 모듈 -->
+                <div class="rsvp-card">
+                    <div class="deadline-date">5월 18일 15시까지 회신 부탁드립니다!</div>
+
+                    <button type="button" id="toggleBtn" class="btn-main" onclick="showForm()">참석 여부 알려주기</button>
+
+                    <form id="rsvpForm" class="rsvp-form" onsubmit="submitRSVP(event)">
+                        <input type="text" id="nameInput" placeholder="성함 (예: 김현아)" required>
+                        <select id="attendanceInput" required>
+                            <option value="" disabled selected>참석 여부 선택</option>
+                            <option value="1차부터 참석">1차부터 참석</option>
+                            <option value="2차부터 합류">2차부터 합류</option>
+                            <option value="불참 (마음만 함께)">불참 (마음만 함께)</option>
+                        </select>
+                        <input type="text" id="commentInput" placeholder="남기실 말씀 (선택사항)">
+                        <button type="submit" id="submitBtn" class="btn-main">제출하기</button>
+                    </form>
+                </div>
+
+                <!-- 참석자 현황 표 -->
+                <div class="rsvp-table-section">
+                    <div class="rsvp-table-title">참석자 현황</div>
+                    <div class="rsvp-summary" id="rsvpSummary">
+                        <span class="summary-badge badge-total">👥 전체 <span id="totalCount">0</span>명</span>
+                        <span class="summary-badge badge-attend">✅ 참석 <span id="attendCount">0</span>명</span>
+                        <span class="summary-badge badge-absent">😢 불참 <span id="absentCount">0</span>명</span>
+                    </div>
+                    <div class="rsvp-table-wrap">
+                        <table class="rsvp-table">
+                            <thead>
+                                <tr>
+                                    <th>성함</th>
+                                    <th>참석 여부</th>
+                                    <th>한마디</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rsvpTableBody">
+                                <tr><td colspan="3" class="rsvp-loading">불러오는 중...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-notice">
+                <div class="info-pill">📝 예약명: <b>"최승훈"</b></div>
+                <p class="info-desc">
+                    먼저 도착하시는 분은 예약 성함을 말씀하시고 편하게 계시면 됩니다.<br />
+                    저희는 퇴근 후 최대한 빨리 넘어갈게요! 그날 뵙겠습니다. :)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showForm() {
+            document.getElementById('rsvpForm').style.display = 'block';
+            document.getElementById('toggleBtn').style.display = 'none';
+        }
+
+        function getAttendanceBadge(val) {
+            if (val.includes('1차')) return '<span class="attendance-badge att-1st">1차부터 참석</span>';
+            if (val.includes('2차')) return '<span class="attendance-badge att-2nd">2차부터 합류</span>';
+            return '<span class="attendance-badge att-absent">불참</span>';
+        }
+
+        function renderTable(rows) {
+            const tbody = document.getElementById('rsvpTableBody');
+            if (!rows || rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="rsvp-empty">아직 제출된 응답이 없어요 😊</td></tr>';
+                document.getElementById('totalCount').textContent = '0';
+                document.getElementById('attendCount').textContent = '0';
+                document.getElementById('absentCount').textContent = '0';
+                return;
+            }
+
+            const attendCount = rows.filter(r => !r.attendance.includes('불참')).length;
+            const absentCount = rows.filter(r => r.attendance.includes('불참')).length;
+            document.getElementById('totalCount').textContent = rows.length;
+            document.getElementById('attendCount').textContent = attendCount;
+            document.getElementById('absentCount').textContent = absentCount;
+
+            tbody.innerHTML = rows.map(r => `
+                <tr>
+                    <td>${r.name}</td>
+                    <td>${getAttendanceBadge(r.attendance)}</td>
+                    <td>${r.comment || ''}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadSubmissions() {
+            try {
+                const res = await fetch('/api/rsvp');
+                if (!res.ok) throw new Error('서버 오류');
+                const rows = await res.json();
+                renderTable(rows);
+            } catch (e) {
+                document.getElementById('rsvpTableBody').innerHTML =
+                    '<tr><td colspan="3" class="rsvp-empty">데이터를 불러오지 못했어요.</td></tr>';
+            }
+        }
+
+        async function submitRSVP(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const name = document.getElementById('nameInput').value.trim();
+            const attendance = document.getElementById('attendanceInput').value;
+            const comment = document.getElementById('commentInput').value.trim();
+
+            if (!name || !attendance) return;
+
+            btn.disabled = true;
+            btn.textContent = '제출 중...';
+
+            try {
+                const res = await fetch('/api/rsvp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, attendance, comment }),
+                });
+                if (!res.ok) throw new Error('제출 실패');
+                document.getElementById('rsvpForm').innerHTML =
+                    '<p style="text-align:center;color:#2f9e44;font-weight:700;margin:0;">✅ 응답이 제출되었습니다. 감사합니다!</p>';
+                await loadSubmissions();
+            } catch (err) {
+                btn.disabled = false;
+                btn.textContent = '제출하기';
+                alert('제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+            }
+        }
+
+        // 페이지 로드 시 기존 제출 내역 불러오기
+        loadSubmissions();
+    </script>
+</body>
+</html>
